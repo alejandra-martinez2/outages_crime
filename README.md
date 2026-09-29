@@ -27,7 +27,6 @@ For our project we will be working with the police incident reports in the city 
 | --- | --- | --- | --- | --- | --- |
 | 1 | [311 street light outages](https://data.cityofchicago.org/resource/v6vf-nfxy.json) | API | rows, columns, time range, geography — in your own words | daily / monthly / static | free key, 100 req/day |
 | 2 | [Crime Incidents](https://www.kaggle.com/datasets/chicago/chicago-crime) | File | ... | ... | none |
-| 3 | [NAME](https://exact-url) | Scraped | ... | ... | `robots.txt` checked DATE |
 
 Note: If we need a key, say which environment variable holds it and make sure that variable also appears in the .env_template
 
