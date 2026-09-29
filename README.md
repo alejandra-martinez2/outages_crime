@@ -1,16 +1,15 @@
-# outages_crime
-# ADD YOUR PROJECT TITLE
+# Outages Crime
 Add a brief description of your project, in a sentence or two.
 
 ## Team Members
 
 | Name | GitHubID | Role / Focus |
 | --- | --- | --- |
-| FULL NAME | id | e.g. Streamlit app - map |
-| FULL NAME | id | e.g. scraping for SF news data  + scheduled collection |
-| FULL NAME | id | e.g. API call for SF crimedata + data cleaning |
-| FULL NAME | id | e.g. Streamlit app - interactive bargraph|
-| FULL NAME | id | e.g. API call weather data +  scheduled collection|
+| Seth Prisament| seprisament | e.g. Streamlit app - map |
+| Anugrha Tamang | atamang3-star | e.g. scraping for SF news data  + scheduled collection |
+| Alejandra | alejandra-martinez2 | e.g. API call for SF crimedata + data cleaning |
+| Simran Zaveri | simran587  | e.g. Streamlit app - interactive bargraph|
+| Micalaya Fong| id | e.g. API call weather data +  scheduled collection|
 ---
 
 ## Problem Statement
