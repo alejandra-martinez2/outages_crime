@@ -1,6 +1,7 @@
 # Outages Crime
 Add a brief description of your project, in a sentence or two.
 
+
 ## Team Members
 
 | Name | GitHubID | Role / Focus |
@@ -13,7 +14,7 @@ Add a brief description of your project, in a sentence or two.
 ---
 
 ## Problem Statement
-- Follow the direction given in the 1st assignment
+ We combine 311 streetlight outage reports with police incident reports for Chicago city, and Census block group data for demographic controls. We test whether street segments with open/unresolved outages see elevated nighttime crime incidents during the outage window compared to the same segments before the outage or after repair, and whether this effect concentrates in specific crime types versus daytime-driven crimes. A dashboard maps outage locations, repair duration, and nearby crime density, filterable by crime type and time of day. This would be useful to a city public works department prioritizing repair queues, or a police department making the case for infrastructure investment in high-crime areas.
 
 
 ---
