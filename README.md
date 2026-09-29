@@ -1,5 +1,5 @@
 # Outages Crime
-Add a brief description of your project, in a sentence or two.
+For our project we will be working with the police incident reports in the city of Chicago were we will showcasing a map to outage the locations, crime type and day. 
 
 
 ## Team Members
