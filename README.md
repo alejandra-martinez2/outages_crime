@@ -10,7 +10,7 @@ For our project we will be working with the police incident reports in the city 
 | Anugrha Tamang | atamang3-star | e.g. scraping for SF news data  + scheduled collection |
 | Alejandra | alejandra-martinez2 | e.g. API call for SF crimedata + data cleaning |
 | Simran Zaveri | simran587  | e.g. Streamlit app - interactive bargraph|
-| Micalaya Fong| id | e.g. API call weather data +  scheduled collection|
+| Micalaya Fong| mdfong35 | e.g. API call weather data +  scheduled collection|
 ---
 
 ## Problem Statement
