@@ -41,7 +41,7 @@ Note: If we need a key, say which environment variable holds it and make sure th
 - A GCP service account key with access to PROJECT/BUCKET/DATASET
 - Any source API keys listed in the table below
 
-### 1. Clone the repository
+### 1. Clone the repository 
 ```bash
 git clone https://github.com/ORG/REPO.git
 cd REPO
