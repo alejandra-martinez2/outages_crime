@@ -50,7 +50,7 @@ class GcsStringUpload(BaseModel):
 def call_light_webfile_download():
     try:
         df = pd.read_csv(LIGHT_URL)
-        return df.to_json(orient="records")
+        return df.to_dict(orient="records")
     except Exception as e:
         print(f"Error making download request: {e}")
         return JSONResponse(
