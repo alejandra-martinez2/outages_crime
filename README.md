@@ -24,14 +24,21 @@ For our project, we will be combining the 311 streetlight outage reports that ar
 ### Sources
 | # | Source & Link | Method | What it contains | Update frequency | Access requirements |
 | --- | --- | --- | --- | --- | --- |
-| 1 | [311 Street Light Outages]( https://data.cityofchicago.org/api/v3/views/zuxi-7xem/export.csv)| API | One row per street light outage reports: creation_date,last_modified_date, status,sr_type. [January 1, 2011 to present] | [daily] | [none / free key in ‘CHICAGO_APP_TOKEN`] |
-| 2 | [Crime Incidents](https://data.cityofchicago.org/resource/ijzp-q8t2.json) | [FileI] | Police incident reports: Creation Date, status lat/long,location. [2001 to present] | [daily] | [none] |
+| 1 | [311 Street Light Outages]( https://data.cityofchicago.org/api/v3/views/zuxi-7xem/export.csv)| API | One row per street light outage reports: Creation Date, status lat/long,location. [January 1, 2011 to present] | [daily] | [none / free key in ‘CHICAGO_APP_TOKEN`] |
+| 2 | [Crime Incidents](https://data.cityofchicago.org/resource/ijzp-q8t2.json) | [FileI] | Police incident reports: creation_date,last_modified_date, status,sr_type. [2001 to present] | [daily] | [none] |
 
 
 Note: If we need a key, say which environment variable holds it and make sure that variable also appears in the .env_template
 
 ### Integration Goal
-- Follow the direction given in the 1st assignment
+What does each source contribute?
+311 Street Lights Outages contribute to when and where the streetlight outage was reported such as the Creation date, and the latitude and longitude. In addition, it also has the status of when it was repaired such that this will show each event when the outage happened.
+Chicago Crimes Incidents contributed to when and where each one of the crimes happened such as the street_name. Also what type of crime it was given by sr_type. Such is the output of the street light outages.
+ What can the combination reveal?
+When answering these questions that we have set for our project, not only one of the two sources can answer the question alone. Therefore we would need to combine both of the sources to truly answer the question such as if there is a high crime rate due to the outage happening in nighttime rather than daytime or even understanding the rate of crimes happening before the outage and after the repair.
+How can we combine them?
+We can combine them by understanding how to use both sources to match the different crimes happening to the outage. By doing this each of the crimes are clearly in an assigned position if it ranges to be in a certain distance within the latitude and longitude.
+Also we would need to define the different outage windows happening and occurring between the creation_date to the completion_date. In order to do this we take the calculation of finding the timestamp of the time spent repairing. This would be helpful in order to evaluate each of window timestamps to what was pulled to the data
 
 ---
 
@@ -39,13 +46,13 @@ Note: If we need a key, say which environment variable holds it and make sure th
 
 ### Prerequisites
 - Python 3.11+
-- A GCP service account key with access to PROJECT/BUCKET/DATASET
+- A GCP service account key with access to outages-crime/BUCKET/DATASET
 - Any source API keys listed in the table below
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/ORG/REPO.git
-cd REPO
+git clone https://github.com/alejandra-martinez2/outages_crime.git
+cd outages_crime.git
 ```
 
 ### 2. Configure environment variables
@@ -64,7 +71,7 @@ cp .env_template .env
 ### 4. How to call your endpoint
 To start the API server,
 ```python
-fastapi run mycode.py
+fastapi run extract_save_data.py
 ```
 
 ```python
@@ -75,8 +82,9 @@ Make sure it writes the data in the bucket.
 ---
 ## Repository Structure
 ```
-.
-├── your_code.py
+├── fastapi
 ├── .env_template
+└── .gitignore
 └── README.md
+└── requirements.txt
 ```
