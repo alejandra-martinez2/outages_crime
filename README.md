@@ -24,8 +24,8 @@ For our project, we will be combining the 311 streetlight outage reports that ar
 ### Sources
 | # | Source & Link | Method | What it contains | Update frequency | Access requirements |
 | --- | --- | --- | --- | --- | --- |
-| 1 | [311 Street Light Outages](https://data.cityofchicago.org/api/v3/views/zuxi-7xem/export.csv)| API | One row per street light outage reports: Creation Date, status lat/long,location. [January 1, 2011 to present] | [daily] | [none / free key in ‘CHICAGO_APP_TOKEN`] |
-| 2 | [Crime Incidents](https://data.cityofchicago.org/resource/ijzp-q8t2.json) | [FileI] | Police incident reports: creation_date,last_modified_date, status,sr_type. [2001 to present] | [daily] | [none] |
+| 1 | [311 Street Light Outages](https://data.cityofchicago.org/api/v3/views/zuxi-7xem/export.csv)| API | One row per street light outage reports: Creation Date, status lat/long,location. [January 1, 2011 to present] | daily | [none / free key in ‘CHICAGO_APP_TOKEN`] |
+| 2 | [Crime Incidents](https://data.cityofchicago.org/resource/ijzp-q8t2.json) | File | Police incident reports: creation_date,last_modified_date, status,sr_type. [2001 to present] | daily | none |
 
 
 Note: If we need a key, say which environment variable holds it and make sure that variable also appears in the .env_template
