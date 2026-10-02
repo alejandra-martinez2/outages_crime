@@ -1,6 +1,7 @@
 # Outages Crime
 For our project we will be working with the police incident reports in the city of Chicago where we will showcase a map to outage the locations, crime type and day. 
 
+
 ## Team Members
 
 | Name | GitHubID | Role / Focus |
@@ -13,19 +14,19 @@ For our project we will be working with the police incident reports in the city 
 ---
 
 ## Problem Statement
- We combine 311 streetlight outage reports with police incident reports for Chicago city, and Census block group data for demographic controls. We test whether street segments with open/unresolved outages see elevated nighttime crime incidents during the outage window compared to the same segments before the outage or after repair, and whether this effect concentrates in specific crime types versus daytime-driven crimes. A dashboard maps outage locations, repair duration, and nearby crime density, filterable by crime type and time of day. This would be useful to a city public works department prioritizing repair queues, or a police department making the case for infrastructure investment in high-crime areas.
+For our project, we will be combining the 311 streetlight outage reports that are related to the police reports happening in the city of Chicago. We will test whether areas with open, unresolved outages have a higher number of nighttime crime incidents during the outage window than in the periods before the outage or after the repair. Therefore, we will build a dashboard that maps outage locations, repair times, and crime frequency, and filters by crime type and time of day. This project would be helpful to the city public works department who are in need of prioritizing the repair requests and helping to create decisions to create more infrastructure where high-crimes rely.
 
 
 ---
 
 ## Data Sources and Integration Goal
-- Follow the direction given in the 1st assignment
 
 ### Sources
 | # | Source & Link | Method | What it contains | Update frequency | Access requirements |
 | --- | --- | --- | --- | --- | --- |
-| 1 | [311 street light outages](https://data.cityofchicago.org/resource/v6vf-nfxy.json) | API | creation_date, completion_date, status, lat/long | daily / monthly / static | free key, 100 req/day | 
-| 2 | [Crime Incidents](https://www.kaggle.com/datasets/chicago/chicago-crime) | File | ... | ... | none |
+| 1 | [311 Street Light Outages]( "https://data.cityofchicago.org/api/v3/views/zuxi-7xem/export.csv")| API | One row per street light outage reports: creation_date, completion_date, status, lat/long. January 1, 2011 to present. | [daily] | [none / free key in ``CHICAGO_APP_TOKEN`] |
+| 2 | [Crime Incidents]("https://data.cityofchicago.org/resource/ijzp-q8t2.json") | [File/API] | Police incident reports: [date, category, lat/long, neighborhood]. [Time range, SF] | [daily] | [none] |
+
 
 Note: If we need a key, say which environment variable holds it and make sure that variable also appears in the .env_template
 
@@ -41,7 +42,7 @@ Note: If we need a key, say which environment variable holds it and make sure th
 - A GCP service account key with access to PROJECT/BUCKET/DATASET
 - Any source API keys listed in the table below
 
-### 1. Clone the repository 
+### 1. Clone the repository
 ```bash
 git clone https://github.com/ORG/REPO.git
 cd REPO
