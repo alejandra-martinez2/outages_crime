@@ -15,13 +15,15 @@ from user_definition import (
     project_id,
     bucket_name,
     file_name_prefix_crime,
-    file_name_prefix_light
+    file_name_prefix_light,
+    file_name_prefix_income
 )
 
 app = FastAPI()
 
 CRIME_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json"
 LIGHT_URL = "https://data.cityofchicago.org/api/v3/views/zuxi-7xem/export.csv"
+INCOME_URL = "https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD"
 
 # user parameter for '/call_and_save/crime' endpoint
 class CrimeSearchModel(BaseModel):
@@ -46,6 +48,17 @@ class GcsStringUpload(BaseModel):
     bucket_name: str
     file_name: str
     data: str
+
+def call_income_webfile_download():
+    try:
+        df = pd.read_csv(INCOME_URL)
+        return df.to_dict(orient="records")
+    except Exception as e:
+        print(f"Error making download request: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Error making download request: {e}"},
+        ) 
 
 def call_light_webfile_download():
     try:
@@ -128,5 +141,19 @@ def call_light():
         bucket_name=bucket_name,
         file_name=f"{file_name_prefix_light}/{datetime.date.today()}.json",
         data=json.dumps(light_response),
+    )    
+    return save_to_gcs(gcs_data)
+
+@app.post("/call_and_save/income")
+def call_light():
+    income_response = call_income_webfile_download()
+    if isinstance(income_response, JSONResponse):
+        return income_response
+    gcs_data = GcsStringUpload(
+        service_account_key=service_account_file_path,
+        gcp_project_id=project_id,
+        bucket_name=bucket_name,
+        file_name=f"{file_name_prefix_income}/{datetime.date.today()}.json",
+        data=json.dumps(income_response),
     )    
     return save_to_gcs(gcs_data)
