@@ -21,7 +21,7 @@ from user_definition import (
 app = FastAPI()
 
 CRIME_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json"
-LIGHT_URL = "https://data.cityofchicago.org/api/v3/views/zuxi-7xem/export.csv"
+LIGHT_URL = "https://data.cityofchicago.org/resource/v6vf-nfxy.json"
 
 # user parameter for '/call_and_save/crime' endpoint
 class CrimeSearchModel(BaseModel):
@@ -47,16 +47,15 @@ class GcsStringUpload(BaseModel):
     file_name: str
     data: str
 
-def call_light_webfile_download():
+def call_chicago_light_api():
     try:
-        df = pd.read_csv(LIGHT_URL)
-        return df.to_dict(orient="records")
+        return requests.get(LIGHT_URL).json()
     except Exception as e:
-        print(f"Error making download request: {e}")
+        print(f"Error making API request: {e}")
         return JSONResponse(
             status_code=500,
-            content={"message": f"Error making download request: {e}"},
-        )    
+            content={"message": f"Error making API request: {e}"},
+        )   
 
 
 def call_chicago_crime_api(query_params: CrimeQuery):
@@ -119,7 +118,7 @@ def call_crime(crime_input: CrimeSearchModel):
 
 @app.post("/call_and_save/light")
 def call_light():
-    light_response = call_light_webfile_download()
+    light_response = call_chicago_light_api()
     if isinstance(light_response, JSONResponse):
         return light_response
     gcs_data = GcsStringUpload(
