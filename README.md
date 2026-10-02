@@ -65,7 +65,7 @@ cp .env_template .env
 | Variable | Description | Example |
 | --- | --- | --- |
 | `GCP_SERVICE_ACCOUNT_KEY` | Absolute path to your service account JSON | `/Users/you/.ssh/key.json` |
-| ``CHICAGO_APP_TOKEN`` | The app token for the Chicago data is optional | `abc123...` |
+| ``CHICAGO_APP_TOKEN`` | Optional app token for the Chicago data portal (higher rate limits) | `abc123...` |
 | `API_SERVICE_URL` | Where the web app reaches the API | `http://api-server:8000` |
 
 ### 4. How to call your endpoint
