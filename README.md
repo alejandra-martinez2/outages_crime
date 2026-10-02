@@ -87,7 +87,7 @@ Make sure it writes the data in the bucket.
 ---
 ## Repository Structure
 ```
-.
+
 ├── fastapi
 ├── .env_template
 └── .gitignore
