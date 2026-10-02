@@ -14,7 +14,7 @@ For our project we will be working with the police incident reports in the city 
 ---
 
 ## Problem Statement
-For our project, we will be combining the 311 streetlight outage reports that are related to the police reports happening in the city of Chicago. We will test whether areas with open, unresolved outages have a higher number of nighttime crime incidents during the outage window than in the periods before the outage or after the repair. Therefore, we will build a dashboard that maps outage locations, repair times, and crime frequency, and filters by crime type and time of day. This project would be helpful to the city public works department who are in need of prioritizing the repair requests and helping to create decisions to create more infrastructure where high-crimes rely.
+For our project we will assess crime frequency by relating police reports with the 311 streetlight outage reports happening in Chicago. We aim to test if areas with currently unresolved power outages have a positive relationship with crime incidents, particularly in the nighttime. We will compare the frequency of crime during current outages to times of repair, or periods following when the outage is resolved. We then plan to build a dashboard to map outage locations, repair times, and crime frequency with filters to sort by crime type and time of day. This project could prove beneficial to the city works department who can use this information to prioritize certain repair requests and allocate resources in order to reduce crime based on historical patterns.
 
 
 ---
@@ -94,4 +94,5 @@ Make sure it writes the data in the bucket.
 └── README.md
 └── requirements.txt
 ```
+
 
