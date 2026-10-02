@@ -75,12 +75,12 @@ fastapi run extract_save_data.py
 ```
 Collect and save the crime data:
 ```python
-requests.post(""http://localhost:8000/call_and_save/crime"", json=crime)
+requests.post("http://localhost:8000/call_and_save/crime", json=crime)
 ```
 
 Collect and save the street light data:
 ```python
-requests.post(""http://localhost:8000/call_and_save/light"", json=light)
+requests.post("http://localhost:8000/call_and_save/light", json=light)
 ```
 
 Make sure it writes the data in the bucket.
