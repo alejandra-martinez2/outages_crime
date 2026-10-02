@@ -65,7 +65,7 @@ cp .env_template .env
 | Variable | Description | Example |
 | --- | --- | --- |
 | `GCP_SERVICE_ACCOUNT_KEY` | Absolute path to your service account JSON | `/Users/you/.ssh/key.json` |
-| `SOURCE_API_KEY` | Key for SOURCE NAME (free tier) | `abc123...` |
+| ``CHICAGO_APP_TOKEN`` | The app token for the Chicago data is optional | `abc123...` |
 | `API_SERVICE_URL` | Where the web app reaches the API | `http://api-server:8000` |
 
 ### 4. How to call your endpoint
@@ -73,18 +73,24 @@ To start the API server,
 ```python
 fastapi run extract_save_data.py
 ```
-
+Collect and save the crime data:
 ```python
-requests.post("http://localhost:8000/something", json=something)
+requests.post(""http://localhost:8000/call_and_save/crime"", json=crime)
 ```
+Collect and save the street light data:
+```python
+requests.post(""http://localhost:8000/call_and_save/light"", json=light)
+``’
 Make sure it writes the data in the bucket.
 
 ---
 ## Repository Structure
 ```
+.
 ├── fastapi
 ├── .env_template
 └── .gitignore
 └── README.md
 └── requirements.txt
 ```
+
