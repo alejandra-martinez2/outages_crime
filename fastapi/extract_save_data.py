@@ -15,13 +15,16 @@ from user_definition import (
     project_id,
     bucket_name,
     file_name_prefix_crime,
-    file_name_prefix_light
+    file_name_prefix_light,
+    file_name_prefix_income
 )
 
 app = FastAPI()
 
 CRIME_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json"
 LIGHT_URL = "https://data.cityofchicago.org/resource/v6vf-nfxy.json"
+INCOME_URL = "https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD"
+
 
 # user parameter for '/call_and_save/crime' endpoint
 class CrimeSearchModel(BaseModel):
@@ -127,5 +130,19 @@ def call_light():
         bucket_name=bucket_name,
         file_name=f"{file_name_prefix_light}/{datetime.date.today()}.json",
         data=json.dumps(light_response),
+    )    
+    return save_to_gcs(gcs_data)
+
+@app.post("/call_and_save/income")
+def call_light():
+    income_response = call_income_webfile_download()
+    if isinstance(income_response, JSONResponse):
+        return income_response
+    gcs_data = GcsStringUpload(
+        service_account_key=service_account_file_path,
+        gcp_project_id=project_id,
+        bucket_name=bucket_name,
+        file_name=f"{file_name_prefix_income}/{datetime.date.today()}.json",
+        data=json.dumps(income_response),
     )    
     return save_to_gcs(gcs_data)
