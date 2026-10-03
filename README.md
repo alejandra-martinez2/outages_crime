@@ -68,8 +68,8 @@ cp .env_template .env
 | Variable | Description | Example |
 | --- | --- | --- |
 | `GCP_SERVICE_ACCOUNT_KEY` | Absolute path to your service account JSON | `/Users/you/.ssh/key.json` |
-| ``CHICAGO_APP_TOKEN`` | Optional app token for the Chicago data portal (higher rate limits) | `abc123...` |
-| `API_SERVICE_URL` | Where the web app reaches the API | `http://api-server:8000` |
+| ``CHICAGO_APP_TOKEN`` | Optional app token for the Chicago data portal, used for higher rate limit like the Crime Incidents endpoint) | `abc123...` |
+| `API_SERVICE_URL` | Where the web app reaches the API server (e.g. the one serving /call_and_save/crime)  | http://localhost:8000 ||
 
 ### 4. How to call your endpoint
 To start the API server,
@@ -105,7 +105,6 @@ Make sure it writes the data in the bucket.
 ├──  README.md
 ├── requirements.txt
 ```
-
 
 
 
