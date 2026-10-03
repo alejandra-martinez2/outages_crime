@@ -44,6 +44,7 @@ class CrimeQuery(BaseModel):
         "latitude, longitude, block, community_area, ward, beat, arrest"
     )
     where: str = "latitude IS NOT NULL"
+    order: str = "date DESC"
 
 # parameters for saving the Chicago crime data to GCS
 class GcsStringUpload(BaseModel):
@@ -93,7 +94,7 @@ def call_chicago_crime_api(query_params: CrimeQuery):
 
 def save_to_gcs(gcs_upload_param: GcsStringUpload):
     """
-    Access the bucket with service_account_key, and upload the object
+    Access the bucket and upload the object
     to the storage. Returns a dict with a status message.
     """
     credentials = service_account.Credentials.\
@@ -111,7 +112,7 @@ def save_to_gcs(gcs_upload_param: GcsStringUpload):
 # ---------------------------------------------------------------------------
 
 @app.post("/call_and_save/crime")
-def call_crime(crime_input: CrimeSearchModel):
+def call_save_crime(crime_input: CrimeSearchModel):
     """
     Combine call_chicago_crime_api() and save_to_gcs() to call crime
     incidents and save the results as a JSON blob in GCS.
