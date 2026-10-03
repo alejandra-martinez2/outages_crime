@@ -11,7 +11,7 @@ For our project we will be working with the police incident reports in the stree
 | Alejandra | alejandra-martinez2 | Creating light + Income endpoint|
 | Simran Zaveri | simran587  | Data Visualization + Analysis |
 | Micalaya Fong| mdfong35 | Feature engineering |
-—
+
 
 ## Problem Statement
 For our project we will assess crime frequency by relating police reports with the 311 streetlight outage reports happening in Chicago. We aim to test if areas with currently unresolved power outages have a positive relationship with crime incidents and income, particularly in the nighttime. We will compare the frequency of crime during current outages to times of repair, or periods following when the outage is resolved and also evaluate how socioeconomic factors interact with both infrastructure neglect and public safety. We then plan to build a dashboard to map outage locations, repair times, and crime frequency with filters to sort by crime type and time of day, and socioeconomic indicators.This project could prove beneficial to the city works department who can use this information to prioritize certain repair requests and allocate resources in order to reduce crime based on historical patterns.
@@ -99,14 +99,16 @@ Make sure it writes the data in the bucket.
 ## Repository Structure
 ```
 
-├── fastapi
-├── extract_save_data.py
-├── user_definition.py
-├── .env_template
+└──  fastapi
+   ├── extract_save_data.py
+   ├── user_definition.py
+└── .env_template
 └── .gitignore
 └── README.md
 └── requirements.txt
 ```
+
+
 
 
 
