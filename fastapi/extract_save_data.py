@@ -25,6 +25,9 @@ CRIME_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json"
 LIGHT_URL = "https://data.cityofchicago.org/resource/v6vf-nfxy.json"
 INCOME_URL = "https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD"
 
+# ---------------------------------------------------------------------------
+# Request / query models
+# ---------------------------------------------------------------------------
 
 # user parameter for '/call_and_save/crime' endpoint
 class CrimeSearchModel(BaseModel):
@@ -50,6 +53,9 @@ class GcsStringUpload(BaseModel):
     file_name: str
     data: str
 
+# ---------------------------------------------------------------------------
+# Functions
+# ---------------------------------------------------------------------------
 def call_chicago_light_api():
     try:
         return requests.get(LIGHT_URL).json()
@@ -96,6 +102,9 @@ def save_to_gcs(gcs_upload_param: GcsStringUpload):
     return {"message": f"file {gcs_upload_param.file_name} has been uploaded "
             f"to {gcs_upload_param.bucket_name} successfully."}
 
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
 
 @app.post("/call_and_save/crime")
 def call_crime(crime_input: CrimeSearchModel):
