@@ -40,7 +40,7 @@ class CrimeQuery(BaseModel):
     crime_url: str = CRIME_URL
     # fields requested
     select: str = (
-        "date, primary_type, description, location_description, "
+        "id, date, primary_type, description, location_description, "
         "latitude, longitude, block, community_area, ward, beat, arrest"
     )
     where: str = "latitude IS NOT NULL"
