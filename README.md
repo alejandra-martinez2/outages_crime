@@ -21,15 +21,13 @@ For our project we will assess crime frequency by relating police reports with t
 ## Data Sources and Integration Goal
 
 ### Sources
+
 | # | Source & Link | Method | What it contains | Update frequency | Access requirements |
-| --- | --- | --- | --- | --- | --- |
-| 1 | [311 Street Light Outages](https://data.cityofchicago.org/api/v3/views/zuxi-7xem/export.csv)| File |One row per street light outage report: creation date, status, lat/long, location. [January 1, 2011 to present] | Daily | [none / free key in ‘CHICAGO_APP_TOKEN`] |
-| 2 | [Crime Incidents](https://data.cityofchicago.org/resource/ijzp-q8t2.json) | File | Police incident reports: creation_date,last_modified_date, status,sr_type. [2001 to present] | Daily| none |
+|---|---|---|---|---|---|
+| 1 | [311 Street Light Outages](https://data.cityofchicago.org/api/v3/views/zuxi-7xem/export.csv) | File | One row per street light outage report: creation date, status, lat/long, location. (Jan 1, 2011 – present) | Daily | None / free key in `CHICAGO_APP_TOKEN` |
+| 2 | [Crime Incidents](https://data.cityofchicago.org/resource/ijzp-q8t2.json) | File | Police incident reports: case number, date, primary type, description, arrest/domestic flags, beat, district, ward, community area, lat/long. (2001 – present) | Daily | None |
+| 3 | [Income Levels](https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD) | API | Socioeconomic factors: Community Area Number, Community Area Name, Per Capita Income. | Static | None |
 
-
-
-
-| 3 | [Income Levels](https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD) | API | Socioeconomic factors: Community Area Number, Community Area Name, Per Capita Income| Static | none |
 
 Note: If we need a key, say which environment variable holds it and make sure that variable also appears in the .env_template
 
@@ -107,6 +105,8 @@ Make sure it writes the data in the bucket.
 ├──  README.md
 ├── requirements.txt
 ```
+
+
 
 
 
