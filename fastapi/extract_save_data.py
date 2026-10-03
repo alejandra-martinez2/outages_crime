@@ -69,12 +69,14 @@ def call_chicago_light_api():
 
 def call_chicago_crime_api(query_params: CrimeQuery):
     """
-    Call Chicago crime incidents from the API and return as a list or the API's JSON response.
+    Call Chicago crime incidents from the API, most recent first,
+    and return as a list.
     On failure, returns a JSONResponse with status_code=500
     """
     headers = {"X-App-Token": query_params.socrata_app_token}
     params = {"$select": query_params.select,
               "$where": query_params.where,
+              "$order": query_params.order,
               "$limit": query_params.number_records}
     try:
         return requests.get(query_params.crime_url, headers=headers,
