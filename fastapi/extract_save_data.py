@@ -79,8 +79,10 @@ def call_chicago_crime_api(query_params: CrimeQuery):
               "$order": query_params.order,
               "$limit": query_params.number_records}
     try:
-        return requests.get(query_params.crime_url, headers=headers,
-                        params=params, timeout=60).json()
+        response = requests.get(query_params.crime_url, headers=headers,
+                        params=params, timeout=60)
+        response.raise_for_status()
+        return response.json()
     except Exception as e:
         print(f"Error making API request: {e}")
         return JSONResponse(
