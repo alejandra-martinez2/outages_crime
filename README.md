@@ -99,13 +99,13 @@ Make sure it writes the data in the bucket.
 ## Repository Structure
 ```
 
-└──  fastapi
-   ├── extract_save_data.py
-   ├── user_definition.py
-└── .env_template
-└── .gitignore
-└── README.md
-└── requirements.txt
+├── fastapi
+└── extract_save_data.py
+└──  user_definition.py
+├── .env_template
+├── .gitignore
+├──  README.md
+├── requirements.txt
 ```
 
 
