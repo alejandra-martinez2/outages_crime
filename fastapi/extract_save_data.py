@@ -25,6 +25,9 @@ CRIME_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json"
 LIGHT_URL = "https://data.cityofchicago.org/resource/v6vf-nfxy.json"
 INCOME_URL = "https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD"
 
+# ---------------------------------------------------------------------------
+# Request / query models
+# ---------------------------------------------------------------------------
 
 # user parameter for '/call_and_save/crime' endpoint
 class CrimeSearchModel(BaseModel):
@@ -37,10 +40,11 @@ class CrimeQuery(BaseModel):
     crime_url: str = CRIME_URL
     # fields requested
     select: str = (
-        "date, primary_type, description, location_description, "
+        "id, date, primary_type, description, location_description, "
         "latitude, longitude, block, community_area, ward, beat, arrest"
     )
     where: str = "latitude IS NOT NULL"
+    order: str = "date DESC"
 
 # parameters for saving the Chicago crime data to GCS
 class GcsStringUpload(BaseModel):
@@ -50,6 +54,9 @@ class GcsStringUpload(BaseModel):
     file_name: str
     data: str
 
+# ---------------------------------------------------------------------------
+# Functions
+# ---------------------------------------------------------------------------
 def call_chicago_light_api():
     try:
         return requests.get(LIGHT_URL).json()
@@ -63,16 +70,20 @@ def call_chicago_light_api():
 
 def call_chicago_crime_api(query_params: CrimeQuery):
     """
-    Call Chicago crime incidents from the API and return as a list or the API's JSON response.
+    Call Chicago crime incidents from the API, most recent first,
+    and return as a list.
     On failure, returns a JSONResponse with status_code=500
     """
     headers = {"X-App-Token": query_params.socrata_app_token}
     params = {"$select": query_params.select,
               "$where": query_params.where,
+              "$order": query_params.order,
               "$limit": query_params.number_records}
     try:
-        return requests.get(query_params.crime_url, headers=headers,
-                        params=params, timeout=60).json()
+        response = requests.get(query_params.crime_url, headers=headers,
+                        params=params, timeout=60)
+        response.raise_for_status()
+        return response.json()
     except Exception as e:
         print(f"Error making API request: {e}")
         return JSONResponse(
@@ -83,7 +94,7 @@ def call_chicago_crime_api(query_params: CrimeQuery):
 
 def save_to_gcs(gcs_upload_param: GcsStringUpload):
     """
-    Access the bucket with service_account_key, and upload the object
+    Access the bucket and upload the object
     to the storage. Returns a dict with a status message.
     """
     credentials = service_account.Credentials.\
@@ -96,9 +107,12 @@ def save_to_gcs(gcs_upload_param: GcsStringUpload):
     return {"message": f"file {gcs_upload_param.file_name} has been uploaded "
             f"to {gcs_upload_param.bucket_name} successfully."}
 
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
 
 @app.post("/call_and_save/crime")
-def call_crime(crime_input: CrimeSearchModel):
+def call_save_crime(crime_input: CrimeSearchModel):
     """
     Combine call_chicago_crime_api() and save_to_gcs() to call crime
     incidents and save the results as a JSON blob in GCS.
