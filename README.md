@@ -7,9 +7,9 @@ For our project we will be working with the police incident reports in the stree
 | Name | GitHubID | Role / Focus |
 | --- | --- | --- |
 | Seth Prisament| seprisament | API structure + Creating time endpoint |
-| Anugrha Tamang | atamang3-star |  Data Visualization + Analysis |
-| Alejandra | alejandra-martinez2 | Creating light + Income endpoint|
-| Simran Zaveri | simran587  | Data Visualization + Analysis |
+| Anugrha Tamang| atamang3-star |  Data Visualization + Analysis |
+| Alejandra Martinez| alejandra-martinez2 | Creating light + Income endpoint|
+| Simran Zaveri| simran587  | Data Visualization + Analysis |
 | Micalaya Fong| mdfong35 | Feature engineering |
 
 
