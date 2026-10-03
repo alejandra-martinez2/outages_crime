@@ -100,8 +100,8 @@ Make sure it writes the data in the bucket.
 ```
 
 ├── fastapi
-└── extract_save_data.py
-└──  user_definition.py
+    └── extract_save_data.py
+    └──  user_definition.py
 ├── .env_template
 ├── .gitignore
 ├──  README.md
