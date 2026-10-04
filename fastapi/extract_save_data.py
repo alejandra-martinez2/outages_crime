@@ -60,7 +60,7 @@ class GcsStringUpload(BaseModel):
 def call_income_webfile_download():
     try:
         df = pd.read_csv(INCOME_URL)
-        return df.to_dict(orient="records")
+        return df.to_json(orient="records", date_format="iso")
     except Exception as e:
         print(f"Error making download request: {e}")
         return JSONResponse(
@@ -168,6 +168,6 @@ def call_save_income():
         gcp_project_id=project_id,
         bucket_name=bucket_name,
         file_name=f"{file_name_prefix_income}/{datetime.date.today()}.json",
-        data=json.dumps(income_response),
+        data=income_response,
     )    
     return save_to_gcs(gcs_data)
