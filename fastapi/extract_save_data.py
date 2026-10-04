@@ -43,11 +43,13 @@ class LightQuery(BaseModel):
     number_records: int
     light_url: str = LIGHT_URL
     select: str = (
-        "creation_date, status, completion_date, service_request_number, "
-        "type_of_service_request, street_address, zip_code, ward, "
-        "police_district, community_area, latitude, longitude"
+        "sr_number, sr_type, owner_department, status, origin, "
+        "created_date, last_modified_date, closed_date,"
+        "community_area, duplicate, legacy_record, created_hour, "
+        "latitude, longitude"
     )
-    order: str = "creation_date DESC"
+    where: str = "sr_type = 'Street Light Out Complaint' AND duplicate = 'false'"
+    order: str = "created_date DESC"
 
 # parameters for calling the Chicago crime API
 class CrimeQuery(BaseModel):
@@ -92,6 +94,7 @@ def call_chicago_light_api(query_params: LightQuery):
     """
     params = {
         "$select": query_params.select,
+        "$where": query_params.where,
         "$order": query_params.order,
         "$limit": query_params.number_records,
     }
