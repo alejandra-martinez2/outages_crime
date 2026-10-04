@@ -57,6 +57,17 @@ class GcsStringUpload(BaseModel):
 # ---------------------------------------------------------------------------
 # Functions
 # ---------------------------------------------------------------------------
+def call_income_webfile_download():
+    try:
+        df = pd.read_csv(INCOME_URL)
+        return df.to_dict(orient="records")
+    except Exception as e:
+        print(f"Error making download request: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Error making download request: {e}"},
+        ) 
+    
 def call_chicago_light_api():
     try:
         return requests.get(LIGHT_URL).json()
@@ -134,7 +145,7 @@ def call_save_crime(crime_input: CrimeSearchModel):
     return save_to_gcs(gcs_data)
 
 @app.post("/call_and_save/light")
-def call_light():
+def call_save_light():
     light_response = call_chicago_light_api()
     if isinstance(light_response, JSONResponse):
         return light_response
@@ -148,7 +159,7 @@ def call_light():
     return save_to_gcs(gcs_data)
 
 @app.post("/call_and_save/income")
-def call_light():
+def call_save_income():
     income_response = call_income_webfile_download()
     if isinstance(income_response, JSONResponse):
         return income_response
