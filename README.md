@@ -5,6 +5,7 @@ Are Dark Streets Associated with Increased Crime in Chicago?
 For our project, we will be analyzing police incident reports and 311 streetlight outage data from the City of Chicago to explore the relationship between streetlight outages and crime rates. Therefore, we will be developing an interactive dashboard with visualizations that highlight the outage locations, crime patterns, and the different income levels, and how the streetlight outages may be associated with crime
 
 
+
 ## Team Members
 
 | Name | GitHubID | Role / Focus |
@@ -22,15 +23,24 @@ This project examines the relationship between crime and street-light outages in
 
 ---
 
+
+
+
+
+
+
+
+
+
 ## Data Sources and Integration Goal
 
 ### Sources
 
 | # | Source & Link | Method | What it contains | Update frequency | Access requirements |
 |---|---|---|---|---|---|
-| 1 | [311 Street Light Outages](https://data.cityofchicago.org/resource/v6vf-nfxy.json) | File | One row per street light outage report: created_date, status, latitude, longitude, and location. (Jan 1, 2011 – present) | Daily | None / free key in `SOCRATA_APP_TOKEN` |
-| 2 | [Crime Incidents](https://data.cityofchicago.org/resource/ijzp-q8t2.json) | File | Police incident reports: id, date, primary_type, description, arrest, beat, ward, community area, latitude, longitude, location (2001 – present) | Daily | Socrata SODA App Token |
-| 3 | [Income Levels](https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD) | API | Socioeconomic factors: Community Area Number, Community Area Name, Per Capita Income. | Static | None |
+| 1 | [311 Street Light Outages](https://data.cityofchicago.org/resource/v6vf-nfxy.json) | API | One row per street light outage report: created_date, status, latitude, longitude, and location. (Jan 1, 2011 – present) | Daily | SOCRATA_APP_TOKEN |
+| 2 | [Crime Incidents](https://data.cityofchicago.org/resource/ijzp-q8t2.json) | API | Police incident reports: id, date, primary_type, description, arrest, beat, ward, community area, latitude, longitude, location (2001 – present) | Daily | Socrata SODA App Token |
+| 3 | [Income Levels](https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD) | Webfile | Census Socioeconomic factors: Community Area Number, Community Area Name, Per Capita Income. | Updated as new data becomes available | None |
 
 
 ### Integration Goal
@@ -53,10 +63,12 @@ cd outages_crime.git
 ```
 
 ### 2. Configure environment variables
+Copy the template file and fill in your own values:
 
 ```bash
 cp .env_template.env
 ```
+
 
 | Variable | Description | Example |
 | --- | --- | --- |
@@ -86,7 +98,7 @@ requests.post("http://localhost:8000/call_and_save/light", json=light)
 Collect and save the income data:
 ```python
 requests.post("http://localhost:8000/call_and_save/income", json=income)
-```
+``
 ---
 ## Repository Structure
 ```
@@ -99,6 +111,7 @@ requests.post("http://localhost:8000/call_and_save/income", json=income)
 ├──  README.md
 ├── requirements.txt
 ```
+
 
 
 
