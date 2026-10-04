@@ -48,7 +48,7 @@ class LightQuery(BaseModel):
         "community_area, duplicate, legacy_record, created_hour, "
         "latitude, longitude"
     )
-    where: str = "sr_type = 'Street Light Out Complaint' AND duplicate = 'false'"
+    where: str = "sr_type in('Street Light Out Complaint', 'Alley Light Out Complaint') AND duplicate = 'false'"
     order: str = "created_date DESC"
 
 # parameters for calling the Chicago crime API
