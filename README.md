@@ -23,15 +23,6 @@ This project examines the relationship between crime and street-light outages in
 
 ---
 
-
-
-
-
-
-
-
-
-
 ## Data Sources and Integration Goal
 
 ### Sources
@@ -39,7 +30,7 @@ This project examines the relationship between crime and street-light outages in
 | # | Source & Link | Method | What it contains | Update frequency | Access requirements |
 |---|---|---|---|---|---|
 | 1 | [311 Street Light Outages](https://data.cityofchicago.org/resource/v6vf-nfxy.json) | API | One row per street light outage report: created_date, status, latitude, longitude, and location. (Jan 1, 2011 – present) | Daily | SOCRATA_APP_TOKEN |
-| 2 | [Crime Incidents](https://data.cityofchicago.org/resource/ijzp-q8t2.json) | API | Police incident reports: id, date, primary_type, description, arrest, beat, ward, community area, latitude, longitude, location (2001 – present) | Daily | Socrata SODA App Token |
+| 2 | [Crime Incidents](https://data.cityofchicago.org/resource/ijzp-q8t2.json) | API | Police incident reports: id, date, primary_type, description, community area, latitude, longitude, location (2001 – present) | Daily | Socrata SODA App Token |
 | 3 | [Income Levels](https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD) | Webfile | Census Socioeconomic factors: Community Area Number, Community Area Name, Per Capita Income. | Updated as new data becomes available | None |
 
 
