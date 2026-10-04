@@ -94,15 +94,14 @@ Collect and save the street light data:
 requests.post("http://localhost:8000/call_and_save/light", json=light)
 ```
 
-
 Collect and save the income data:
 ```python
 requests.post("http://localhost:8000/call_and_save/income", json=income)
-``
-
-## Repository Structure
 ```
 
+---
+## Repository Structure
+```
 ├── fastapi
     └── extract_save_data.py
     └── user_definition.py
