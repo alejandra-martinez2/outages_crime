@@ -29,9 +29,25 @@ INCOME_URL = "https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?access
 # Request / query models
 # ---------------------------------------------------------------------------
 
+# user parameter for '/call_and_save/light' endpoint
+class LightSearchModel(BaseModel):
+    number_records: int
+
 # user parameter for '/call_and_save/crime' endpoint
 class CrimeSearchModel(BaseModel):
     number_records: int
+
+# parameters for calling the Chicago streetlight outage API
+class LightQuery(BaseModel):
+    socrata_app_token: str
+    number_records: int
+    light_url: str = LIGHT_URL
+    select: str = (
+        "creation_date, status, completion_date, service_request_number, "
+        "type_of_service_request, street_address, zip_code, ward, "
+        "police_district, community_area, latitude, longitude"
+    )
+    order: str = "creation_date DESC"
 
 # parameters for calling the Chicago crime API
 class CrimeQuery(BaseModel):
@@ -68,15 +84,28 @@ def call_income_webfile_download():
             content={"message": f"Error making download request: {e}"},
         ) 
     
-def call_chicago_light_api():
+def call_chicago_light_api(query_params: LightQuery):
+    """
+    Call Chicago streetlight outage records from the API, most recent first,
+    and return as a list.
+    On failure, returns a JSONResponse with status_code=500
+    """
+    params = {
+        "$select": query_params.select,
+        "$order": query_params.order,
+        "$limit": query_params.number_records,
+    }
     try:
-        return requests.get(LIGHT_URL).json()
+        response = requests.get(query_params.light_url,
+                                 params=params, timeout=60)
+        response.raise_for_status()
+        return response.json()
     except Exception as e:
         print(f"Error making API request: {e}")
         return JSONResponse(
             status_code=500,
             content={"message": f"Error making API request: {e}"},
-        )   
+        ) 
 
 
 def call_chicago_crime_api(query_params: CrimeQuery):
@@ -145,8 +174,12 @@ def call_save_crime(crime_input: CrimeSearchModel):
     return save_to_gcs(gcs_data)
 
 @app.post("/call_and_save/light")
-def call_save_light():
-    light_response = call_chicago_light_api()
+def call_save_light(light_input: LightSearchModel):
+    light_query_param = LightQuery(
+        socrata_app_token=socrata_app_token,
+        number_records=light_input.number_records,
+    )
+    light_response = call_chicago_light_api(light_query_param)
     if isinstance(light_response, JSONResponse):
         return light_response
     gcs_data = GcsStringUpload(
@@ -155,7 +188,7 @@ def call_save_light():
         bucket_name=bucket_name,
         file_name=f"{file_name_prefix_light}/{datetime.date.today()}.json",
         data=json.dumps(light_response),
-    )    
+    )
     return save_to_gcs(gcs_data)
 
 @app.post("/call_and_save/income")
