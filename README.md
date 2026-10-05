@@ -102,6 +102,8 @@ requests.post("http://localhost:8000/call_and_save/income", json=income)
 ├── requirements.txt
 ```
 
+# outages_crime
+
 
 
 
