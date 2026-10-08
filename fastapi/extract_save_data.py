@@ -16,7 +16,8 @@ from user_definition import (
     bucket_name,
     file_name_prefix_crime,
     file_name_prefix_light,
-    file_name_prefix_income
+    file_name_prefix_income,
+    file_name_prefix_population
 )
 
 app = FastAPI()
@@ -24,6 +25,7 @@ app = FastAPI()
 CRIME_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json"
 LIGHT_URL = "https://data.cityofchicago.org/resource/v6vf-nfxy.json"
 INCOME_URL = "https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD"
+POPULATION_URL = "https://data.cityofchicago.org/api/views/t68z-cikk/rows.csv?accessType=DOWNLOAD"
 
 # ---------------------------------------------------------------------------
 # Request / query models
@@ -78,6 +80,18 @@ class GcsStringUpload(BaseModel):
 def call_income_webfile_download():
     try:
         df = pd.read_csv(INCOME_URL)
+        return df.to_json(orient="records", date_format="iso")
+    except Exception as e:
+        print(f"Error making download request: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Error making download request: {e}"},
+        ) 
+    
+def call_population_webfile_download():
+    try:
+        df = pd.read_csv(POPULATION_URL)
+        df = df[["Community Area", "Total Population"]]
         return df.to_json(orient="records", date_format="iso")
     except Exception as e:
         print(f"Error making download request: {e}")
@@ -205,5 +219,19 @@ def call_save_income():
         bucket_name=bucket_name,
         file_name=f"{file_name_prefix_income}/{datetime.date.today()}.json",
         data=income_response,
+    )    
+    return save_to_gcs(gcs_data)
+
+@app.post("/call_and_save/population")
+def call_save_population():
+    population_response = call_population_webfile_download()
+    if isinstance(population_response, JSONResponse):
+        return population_response
+    gcs_data = GcsStringUpload(
+        service_account_key=service_account_file_path,
+        gcp_project_id=project_id,
+        bucket_name=bucket_name,
+        file_name=f"{file_name_prefix_population}/{datetime.date.today()}.json",
+        data=population_response,
     )    
     return save_to_gcs(gcs_data)

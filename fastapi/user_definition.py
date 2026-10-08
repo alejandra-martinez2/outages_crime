@@ -10,3 +10,4 @@ socrata_app_token = os.getenv("SOCRATA_APP_TOKEN", "")
 file_name_prefix_crime = "crime"
 file_name_prefix_light = "light"
 file_name_prefix_income= "income"
+file_name_prefix_population = "population"
