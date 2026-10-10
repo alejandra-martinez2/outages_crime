@@ -114,7 +114,7 @@ def call_chicago_light_api(query_params: LightQuery):
     }
     try:
         response = requests.get(query_params.light_url,
-                                 params=params, timeout=60)
+                                 params=params, timeout=120)
         response.raise_for_status()
         return response.json()
     except Exception as e:
