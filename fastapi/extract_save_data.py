@@ -181,7 +181,8 @@ def call_save_crime(crime_input: CrimeSearchModel):
     crime_query_param = CrimeQuery(
         socrata_app_token=socrata_app_token,
         number_records=crime_input.number_records,
-        where=f"latitude IS NOT NULL AND updated_on >= '{cutoff}'"
+        where=f"latitude IS NOT NULL AND updated_on >= '{cutoff}'",
+        order="updated_on DESC"
     )
     crime_response = call_chicago_crime_api(crime_query_param)
     if isinstance(crime_response, JSONResponse):
