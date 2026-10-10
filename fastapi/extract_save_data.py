@@ -50,7 +50,7 @@ class LightQuery(BaseModel):
         "community_area, duplicate, legacy_record, created_hour, "
         "latitude, longitude"
     )
-    where: str = "sr_type in('Street Light Out Complaint', 'Alley Light Out Complaint') AND duplicate = 'false'"
+    where: str
     order: str = "created_date DESC"
 
 # parameters for calling the Chicago crime API
@@ -60,10 +60,10 @@ class CrimeQuery(BaseModel):
     crime_url: str = CRIME_URL
     # fields requested
     select: str = (
-        "id, date, primary_type, description, location_description, "
+        "id, date, updated_on, primary_type, description, location_description, "
         "latitude, longitude, block, community_area, ward, beat, arrest"
     )
-    where: str = "latitude IS NOT NULL"
+    where: str
     order: str = "date DESC"
 
 # parameters for saving the Chicago crime data to GCS
@@ -98,8 +98,8 @@ def call_population_webfile_download():
         return JSONResponse(
             status_code=500,
             content={"message": f"Error making download request: {e}"},
-        ) 
-    
+        )  
+
 def call_chicago_light_api(query_params: LightQuery):
     """
     Call Chicago streetlight outage records from the API, most recent first,
@@ -167,6 +167,9 @@ def save_to_gcs(gcs_upload_param: GcsStringUpload):
 # ---------------------------------------------------------------------------
 # Endpoints
 # ---------------------------------------------------------------------------
+def cutoff_iso(days_back: int) -> str:
+    cutoff = datetime.datetime.now() - datetime.timedelta(days=days_back)
+    return cutoff.strftime("%Y-%m-%dT%H:%M:%S")   
 
 @app.post("/call_and_save/crime")
 def call_save_crime(crime_input: CrimeSearchModel):
@@ -174,9 +177,11 @@ def call_save_crime(crime_input: CrimeSearchModel):
     Combine call_chicago_crime_api() and save_to_gcs() to call crime
     incidents and save the results as a JSON blob in GCS.
     """
+    cutoff = cutoff_iso(2)
     crime_query_param = CrimeQuery(
         socrata_app_token=socrata_app_token,
         number_records=crime_input.number_records,
+        where=f"latitude IS NOT NULL AND updated_on >= '{cutoff}'"
     )
     crime_response = call_chicago_crime_api(crime_query_param)
     if isinstance(crime_response, JSONResponse):
@@ -192,9 +197,14 @@ def call_save_crime(crime_input: CrimeSearchModel):
 
 @app.post("/call_and_save/light")
 def call_save_light(light_input: LightSearchModel):
+    cutoff = cutoff_iso(2)
     light_query_param = LightQuery(
         socrata_app_token=socrata_app_token,
         number_records=light_input.number_records,
+        where=(
+            "sr_type in('Street Light Out Complaint', 'Alley Light Out Complaint') "
+            f"AND duplicate = false AND last_modified_date >= '{cutoff}'"
+        )
     )
     light_response = call_chicago_light_api(light_query_param)
     if isinstance(light_response, JSONResponse):
