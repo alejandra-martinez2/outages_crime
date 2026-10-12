@@ -33,11 +33,11 @@ POPULATION_URL = "https://data.cityofchicago.org/api/views/t68z-cikk/rows.csv?ac
 
 # user parameter for '/call_and_save/light' endpoint
 class LightSearchModel(BaseModel):
-    number_records: int
+    number_records: int = 50000
 
 # user parameter for '/call_and_save/crime' endpoint
 class CrimeSearchModel(BaseModel):
-    number_records: int
+    number_records: int = 50000
 
 # parameters for calling the Chicago streetlight outage API
 class LightQuery(BaseModel):
@@ -217,7 +217,7 @@ def call_save_income():
         service_account_key=service_account_file_path,
         gcp_project_id=project_id,
         bucket_name=bucket_name,
-        file_name=f"{file_name_prefix_income}/{datetime.date.today()}.json",
+        file_name=f"{file_name_prefix_income}/income.json",
         data=income_response,
     )    
     return save_to_gcs(gcs_data)
@@ -231,7 +231,7 @@ def call_save_population():
         service_account_key=service_account_file_path,
         gcp_project_id=project_id,
         bucket_name=bucket_name,
-        file_name=f"{file_name_prefix_population}/{datetime.date.today()}.json",
+        file_name=f"{file_name_prefix_population}/population.json",
         data=population_response,
     )    
     return save_to_gcs(gcs_data)
