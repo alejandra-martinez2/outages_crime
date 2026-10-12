@@ -3,7 +3,7 @@ import re
 import pandas as pd
 from google.cloud import storage
 from google.oauth2 import service_account
-from user_definition import (bucket_name, file_name_prefixes, project_id,
+from user_definition import (bucket_name, file_name_prefixes,file_name_prefixes_static, project_id,
                             service_account_file_path)
 
 
@@ -24,7 +24,7 @@ incomeCols ={"Community Area Number": "community_area", "COMMUNITY AREA NAME": "
 
 
 # get the data from gcs and reeady to prcess into data frame
-def retrieve_data_from_gcs(service_account_key, project_id, bucket_name, file_name_prefixes, dates):
+def retrieve_data_from_gcs(service_account_key, project_id, bucket_name, file_name_prefixes,file_name_prefixes_static, dates):
     credentials = service_account.Credentials.from_service_account_file(service_account_key)
     client = storage.Client(project=project_id,credentials=credentials)
     bucket = client.bucket(bucket_name)
@@ -37,6 +37,10 @@ def retrieve_data_from_gcs(service_account_key, project_id, bucket_name, file_na
        #CHANGE ONCE SCHEDULER WOKRS to currdate instead of various diff dates- date can be remved from loop and used globally
        datePrefix = dates[prefix]
        blob = bucket.blob(f"{prefix}/{datePrefix}.json")
+       output[prefix]=json.loads(blob.download_as_bytes())
+
+    for prefix in file_name_prefixes_static:
+       blob = bucket.blob(f"{prefix}/{prefix}.json")
        output[prefix]=json.loads(blob.download_as_bytes())
     return output
 
@@ -105,7 +109,7 @@ def makePopulation(data: list, income: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_data():
-    data = retrieve_data_from_gcs(service_account_file_path, project_id, bucket_name,file_name_prefixes, dates)
+    data = retrieve_data_from_gcs(service_account_file_path, project_id, bucket_name,file_name_prefixes,file_name_prefixes_static, dates)
 
     crime= makeFrame(data["crime"])
     light= makeFrame(data["light"], lightCols)
