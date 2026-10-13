@@ -125,7 +125,7 @@ def get_data():
     end = min(crime["date"].max(), light["created_date"].max()).normalize()
     if startDay > end:
         raise ValueError("crime and outage date ranges do not overlap")
-    endDay = end + pd.Timedelta(days=1, unit="D")
+    endDay = end + pd.Timedelta(days=1)
 
 
     # include crime and outage data for overlapping time range
