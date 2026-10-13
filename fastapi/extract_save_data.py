@@ -153,7 +153,7 @@ def call_chicago_crime_api(query_params: CrimeQuery):
               "$limit": query_params.number_records}
     try:
         response = requests.get(query_params.crime_url, headers=headers,
-                        params=params, timeout=60)
+                        params=params, timeout=120)
         response.raise_for_status()
         return response.json()
     except Exception as e:
