@@ -19,7 +19,6 @@ rate =1000
 nameFix = {"MONTCLAIRE": "MONTCLARE","WASHINGTON HEIGHT":"WASHINGTON HEIGHTS"}
 
 #name the cols for join
-lightCols= {"Creation Date": "created_date", "Community Area": "community_area"}
 incomeCols ={"Community Area Number": "community_area", "COMMUNITY AREA NAME": "community_name", "PER CAPITA INCOME ": "per_capita_income"}
 
 
@@ -112,7 +111,7 @@ def get_data():
     data = retrieve_data_from_gcs(service_account_file_path, project_id, bucket_name,file_name_prefixes,file_name_prefixes_static, dates)
 
     crime= makeFrame(data["crime"])
-    light= makeFrame(data["light"], lightCols)
+    light= makeFrame(data["light"])
     income= makeFrame(data["income"], incomeCols).dropna(subset=["community_area"])
 
     crime["date"] = pd.to_datetime(crime["date"], errors="coerce")
