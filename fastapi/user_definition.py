@@ -12,3 +12,6 @@ file_name_prefix_crime = "crime"
 file_name_prefix_light = "light"
 file_name_prefix_income= "income"
 file_name_prefix_population = "population"
+
+file_name_prefixes = ["crime","light"]
+file_name_prefixes_static= ["income","population"]
