@@ -17,7 +17,8 @@ from user_definition import (
     file_name_prefix_crime,
     file_name_prefix_light,
     file_name_prefix_income,
-    file_name_prefix_population
+    file_name_prefix_population,
+    file_name_prefix_geographic
 )
 
 app = FastAPI()
@@ -26,6 +27,7 @@ CRIME_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json"
 LIGHT_URL = "https://data.cityofchicago.org/resource/v6vf-nfxy.json"
 INCOME_URL = "https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD"
 POPULATION_URL = "https://data.cityofchicago.org/api/views/t68z-cikk/rows.csv?accessType=DOWNLOAD"
+GEOGRAPHIC_URL = "https://data.cityofchicago.org/resource/igwz-8jzy.geojson"
 
 # ---------------------------------------------------------------------------
 # Request / query models
@@ -50,7 +52,7 @@ class LightQuery(BaseModel):
         "community_area, duplicate, legacy_record, created_hour, "
         "latitude, longitude"
     )
-    where: str = "sr_type in('Street Light Out Complaint', 'Alley Light Out Complaint') AND duplicate = 'false'"
+    where: str = "sr_type in('Street Light Out Complaint', 'Alley Light Out Complaint') AND duplicate = false"
     order: str = "created_date DESC"
 
 # parameters for calling the Chicago crime API
@@ -99,6 +101,19 @@ def call_population_webfile_download():
             status_code=500,
             content={"message": f"Error making download request: {e}"},
         ) 
+    
+def call_geographic_api():
+    try:
+        response = requests.get(GEOGRAPHIC_URL, timeout=120)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Error making API request: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Error making API request: {e}"},
+        ) 
+
     
 def call_chicago_light_api(query_params: LightQuery):
     """
@@ -206,6 +221,20 @@ def call_save_light(light_input: LightSearchModel):
         file_name=f"{file_name_prefix_light}/{datetime.date.today()}.json",
         data=json.dumps(light_response),
     )
+    return save_to_gcs(gcs_data)
+
+@app.post("/call_and_save/geographic")
+def call_save_geographic():
+    geo_response = call_geographic_api()
+    if isinstance(geo_response, JSONResponse):
+        return geo_response
+    gcs_data = GcsStringUpload(
+        service_account_key=service_account_file_path,
+        gcp_project_id=project_id,
+        bucket_name=bucket_name,
+        file_name=f"{file_name_prefix_geographic}/geographic.json",
+        data=json.dumps(geo_response),
+    )    
     return save_to_gcs(gcs_data)
 
 @app.post("/call_and_save/income")

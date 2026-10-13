@@ -6,10 +6,8 @@ from google.oauth2 import service_account
 from user_definition import (bucket_name, file_name_prefixes,file_name_prefixes_static, project_id,
                             service_account_file_path)
 
-
-
 # dates for each cource until we implement scheduler
-dates ={"crime": "2026-10-06","light":"2026-10-08", "income":"2026-10-02", "population":"2026-10-08"}
+dates ={"crime": "2026-10-11","light":"2026-10-11", "income":"2026-10-02", "population":"2026-10-08"}
 date= "2026-10-10"
 
 #rate for the normalization of crime and outage rates
@@ -66,7 +64,6 @@ def makeFrame(data: list, cols: dict = None) -> pd.DataFrame:
    #return df
 
 
-
 # make uppercase, remove punctuation, spaces, adn include the misspelled fixes from population dataset
 def alterName(name) -> str:
     text = str(name).upper()
@@ -105,8 +102,6 @@ def makePopulation(data: list, income: pd.DataFrame) -> pd.DataFrame:
     return output[["community_area", "population"]]
 
 
-
-
 def get_data():
     data = retrieve_data_from_gcs(service_account_file_path, project_id, bucket_name,file_name_prefixes,file_name_prefixes_static, dates)
 
@@ -127,11 +122,9 @@ def get_data():
         raise ValueError("crime and outage date ranges do not overlap")
     endDay = end + pd.Timedelta(days=1)
 
-
     # include crime and outage data for overlapping time range
     crime = crime[crime["date"].between(startDay, endDay, inclusive="left")]
     light = light[light["created_date"].between(startDay, endDay, inclusive="left")]
-
 
     #start with df with income
     df = income[["community_area", "community_name", "per_capita_income"]].drop_duplicates()
@@ -146,7 +139,6 @@ def get_data():
     population = makePopulation(data["population"], income)
     df = df.merge(population, on="community_area", how="left")
 
-
     # replace missing crime + outage counts w zero. convert counts to ints
     df[["crime_count", "outage_count"]] = (df[["crime_count", "outage_count"]].fillna(0).astype(int))
 
@@ -157,18 +149,14 @@ def get_data():
     #remove these cols simce visualizations do not need them in order to simplify
     df =df.drop(columns=["crime_count", "outage_count", "population"])
 
-    return df.sort_values("community_area").reset_index(drop=True),startDay.date(), end.date()
-
-
+    return df.sort_values("community_area").reset_index(drop=True), data["geographic"], startDay.date(), end.date()
 
 
 if __name__ == '__main__':
-    df, start_date, end_date = get_data()
+    df, geo, start_date, end_date = get_data()
     df.to_csv(f"df_{max(dates.values())}.csv", index=False)
+    with open("geographic.geojson", "w") as f:
+        json.dump(geo, f)
 
     print(df.head())
     print(f"overlapping date range: {start_date} to {end_date}")
-
-
-
-
