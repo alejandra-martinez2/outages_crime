@@ -6,41 +6,40 @@ from google.oauth2 import service_account
 from user_definition import (bucket_name, file_name_prefixes,file_name_prefixes_static, project_id,
                             service_account_file_path)
 
-# dates for each cource until we implement scheduler
-dates ={"crime": "2026-10-11","light":"2026-10-11", "income":"2026-10-02", "population":"2026-10-08"}
-date= "2026-10-10"
-
 #rate for the normalization of crime and outage rates
 rate =1000
-
 # population added by area name- fix misspelled names to match for join
 nameFix = {"MONTCLAIRE": "MONTCLARE","WASHINGTON HEIGHT":"WASHINGTON HEIGHTS"}
-
 #name the cols for join
 incomeCols ={"Community Area Number": "community_area", "COMMUNITY AREA NAME": "community_name", "PER CAPITA INCOME ": "per_capita_income"}
 
+# find the most recent dated file (prefix/YYYY-MM-DD.json) for a prefix in gcs
+def latest_blob_name(bucket, prefix) -> str:
+    pattern = re.compile(rf"^{prefix}/\d{{4}}-\d{{2}}-\d{{2}}\.json$")
+    names = [blob.name for blob in bucket.list_blobs(prefix=f"{prefix}/")
+             if pattern.match(blob.name)]
+    if not names:
+        raise FileNotFoundError(f"no dated files found under {prefix}/ in {bucket.name}")
+    return max(names)
+
 
 # get the data from gcs and reeady to prcess into data frame
-def retrieve_data_from_gcs(service_account_key, project_id, bucket_name, file_name_prefixes,file_name_prefixes_static, dates):
+def retrieve_data_from_gcs(service_account_key, project_id, 
+                           bucket_name, file_name_prefixes,file_name_prefixes_static):
     credentials = service_account.Credentials.from_service_account_file(service_account_key)
     client = storage.Client(project=project_id,credentials=credentials)
     bucket = client.bucket(bucket_name)
     output= {}
 
-    # get data from different prefixes and differnet dates in gcs
-    # once scheduler the date of retrieval will be the same and dates can be removed- prefixes will stay
+    # scheduled data: newest file written by the scheduler for each prefix
     for prefix in file_name_prefixes:
-       #date associated with day the data pulled for associated prefix
-       #CHANGE ONCE SCHEDULER WOKRS to currdate instead of various diff dates- date can be remved from loop and used globally
-       datePrefix = dates[prefix]
-       blob = bucket.blob(f"{prefix}/{datePrefix}.json")
-       output[prefix]=json.loads(blob.download_as_bytes())
+        blob = bucket.blob(latest_blob_name(bucket, prefix))
+        output[prefix] = json.loads(blob.download_as_bytes())
 
     for prefix in file_name_prefixes_static:
        blob = bucket.blob(f"{prefix}/{prefix}.json")
        output[prefix]=json.loads(blob.download_as_bytes())
     return output
-
 
 
 def makeFrame(data: list, cols: dict = None) -> pd.DataFrame:
@@ -103,8 +102,7 @@ def makePopulation(data: list, income: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_data():
-    data = retrieve_data_from_gcs(service_account_file_path, project_id, bucket_name,file_name_prefixes,file_name_prefixes_static, dates)
-
+    data = retrieve_data_from_gcs(service_account_file_path, project_id, bucket_name, file_name_prefixes, file_name_prefixes_static)
     crime= makeFrame(data["crime"])
     light= makeFrame(data["light"])
     income= makeFrame(data["income"], incomeCols).dropna(subset=["community_area"])
@@ -152,9 +150,10 @@ def get_data():
     return df.sort_values("community_area").reset_index(drop=True), data["geographic"], startDay.date(), end.date()
 
 
+
 if __name__ == '__main__':
     df, geo, start_date, end_date = get_data()
-    df.to_csv(f"df_{max(dates.values())}.csv", index=False)
+    df.to_csv(f"df_{max(end_date)}.csv", index=False)
     with open("geographic.geojson", "w") as f:
         json.dump(geo, f)
 

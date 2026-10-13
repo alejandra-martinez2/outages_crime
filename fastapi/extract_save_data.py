@@ -5,6 +5,8 @@ import requests
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
+from data_processing import get_data
+
 from google.cloud import storage
 from google.oauth2 import service_account
 from pydantic import BaseModel
@@ -264,3 +266,25 @@ def call_save_population():
         data=population_response,
     )    
     return save_to_gcs(gcs_data)
+
+@app.get("/data")
+def get_processed_data():
+    """
+    Process the newest crime, outage, income, population, and geographic
+    data from GCS and return it for the webapp.
+    On failure, returns a JSONResponse with status_code=500
+    """
+    try:
+        df, geo, start_date, end_date = get_data()
+    except Exception as e:
+        print(f"Error processing data: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Error processing data: {e}"},
+        )
+    return {
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+        "data": json.loads(df.to_json(orient="records")),
+        "geographic": geo,
+    }
