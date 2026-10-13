@@ -15,4 +15,4 @@ file_name_prefix_population = "population"
 file_name_prefix_geographic = "geographic"
 
 file_name_prefixes = ["crime","light"]
-file_name_prefixes_static= ["income","population"]
+file_name_prefixes_static= ["income","population","geographic"]
