@@ -153,7 +153,7 @@ def get_data():
 
 if __name__ == '__main__':
     df, geo, start_date, end_date = get_data()
-    df.to_csv(f"df_{max(end_date)}.csv", index=False)
+    df.to_csv(f"df_{end_date}.csv", index=False)
     with open("geographic.geojson", "w") as f:
         json.dump(geo, f)
 
