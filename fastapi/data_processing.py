@@ -118,7 +118,7 @@ def get_data():
     end = min(crime["date"].max(), light["created_date"].max()).normalize()
     if startDay > end:
         raise ValueError("crime and outage date ranges do not overlap")
-    endDay = end + pd.Timedelta(days=1)
+    endDay = end + pd.offsets.Day(1)
 
     # include crime and outage data for overlapping time range
     crime = crime[crime["date"].between(startDay, endDay, inclusive="left")]
@@ -126,6 +126,9 @@ def get_data():
 
     #start with df with income
     df = income[["community_area", "community_name", "per_capita_income"]].drop_duplicates()
+    
+    # use qcut insteadof cut becasue it makes equal sized groups/ quantiles instead of using equal width ranges
+    df["income_category"] = pd.qcut(df["per_capita_income"],q=3,labels=["Low", "Medium", "High"])
 
     # MERGES
     crime_counts = crime.groupby("community_area").size().rename("crime_count")
