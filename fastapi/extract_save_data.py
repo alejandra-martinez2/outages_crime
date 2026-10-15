@@ -123,6 +123,7 @@ def call_chicago_light_api(query_params: LightQuery):
     and return as a list.
     On failure, returns a JSONResponse with status_code=500
     """
+    headers = {"X-App-Token": query_params.socrata_app_token}
     params = {
         "$select": query_params.select,
         "$where": query_params.where,
@@ -130,8 +131,9 @@ def call_chicago_light_api(query_params: LightQuery):
         "$limit": query_params.number_records,
     }
     try:
-        response = requests.get(query_params.light_url,
-                                 params=params, timeout=120)
+        # (connect, read) timeout; large pulls can take several minutes
+        response = requests.get(query_params.light_url, headers=headers,
+                                 params=params, timeout=(10, 600))
         response.raise_for_status()
         return response.json()
     except Exception as e:
