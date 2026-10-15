@@ -1,4 +1,5 @@
 import statsmodels
+import requests
 import pandas as pd
 import streamlit as st
 import plotly.express as px
@@ -13,7 +14,7 @@ api_server_url = os.getenv("API_SERVICE_URL")
 @st.cache_data(ttl=3600)
 def load_data():
     response = requests.get(f"{api_server_url}/data", timeout=300)
-    if not responseok:
+    if not response.ok:
         st.error(f"API returned {response.status_code}")
         st.code(response.text[:1000])
         st.stop()
@@ -40,7 +41,7 @@ def bubble_chart(df, x_col, y_col, x_label, y_label):
             "per_capita_income": "Per capita income",
             "income_category": "Income group",
         },
-        trendline="ols" if show_trend else None,  # AI Prompt: for a bubble plot, give me the right code structure to  add a trendline, the package I am using is plotly.express
+        trendline="ols" if show_trend else None,  # AI Prompt: for a bubble plot, give me the right code structure to  add a trendline. The package I am using is plotly.express
         trendline_scope="overall",                # Model used: Claude Sonnet 5.5 
         trendline_color_override="red",
         opacity=0.6,
@@ -65,7 +66,7 @@ if __name__ == "__main__":
         show_trend = st.checkbox("Show trendline", value=False)
 
 
-    users_choice = st.radio("Income group", ["All"] + order_of_income, horizontal=True)   # AI Prompt: Help me create a radio button that allows  allows the users to select from one button
+    users_choice = st.radio("Income group", ["All"] + order_of_income, horizontal=True)   # AI Prompt: Help me create a radio button that allows  the users to select from one button
     if users_choice == "All": # Filtering the data by what rhe user selects               # Model used: Claude Sonnet 5.5 
         filtered = df
     else:
