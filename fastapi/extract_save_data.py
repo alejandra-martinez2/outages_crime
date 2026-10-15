@@ -5,6 +5,8 @@ import requests
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
+from data_processing import get_data
+
 from google.cloud import storage
 from google.oauth2 import service_account
 from pydantic import BaseModel
@@ -17,7 +19,8 @@ from user_definition import (
     file_name_prefix_crime,
     file_name_prefix_light,
     file_name_prefix_income,
-    file_name_prefix_population
+    file_name_prefix_population,
+    file_name_prefix_geographic
 )
 
 app = FastAPI()
@@ -26,6 +29,7 @@ CRIME_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json"
 LIGHT_URL = "https://data.cityofchicago.org/resource/v6vf-nfxy.json"
 INCOME_URL = "https://data.cityofchicago.org/api/views/kn9c-c2s2/rows.csv?accessType=DOWNLOAD"
 POPULATION_URL = "https://data.cityofchicago.org/api/views/t68z-cikk/rows.csv?accessType=DOWNLOAD"
+GEOGRAPHIC_URL = "https://data.cityofchicago.org/resource/igwz-8jzy.geojson"
 
 # ---------------------------------------------------------------------------
 # Request / query models
@@ -50,7 +54,7 @@ class LightQuery(BaseModel):
         "community_area, duplicate, legacy_record, created_hour, "
         "latitude, longitude"
     )
-    where: str = "sr_type in('Street Light Out Complaint', 'Alley Light Out Complaint') AND duplicate = 'false'"
+    where: str = "sr_type in('Street Light Out Complaint', 'Alley Light Out Complaint') AND duplicate = false"
     order: str = "created_date DESC"
 
 # parameters for calling the Chicago crime API
@@ -100,6 +104,19 @@ def call_population_webfile_download():
             content={"message": f"Error making download request: {e}"},
         ) 
     
+def call_geographic_api():
+    try:
+        response = requests.get(GEOGRAPHIC_URL, timeout=120)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Error making API request: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Error making API request: {e}"},
+        ) 
+
+    
 def call_chicago_light_api(query_params: LightQuery):
     """
     Call Chicago streetlight outage records from the API, most recent first,
@@ -138,7 +155,7 @@ def call_chicago_crime_api(query_params: CrimeQuery):
               "$limit": query_params.number_records}
     try:
         response = requests.get(query_params.crime_url, headers=headers,
-                        params=params, timeout=60)
+                        params=params, timeout=120)
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -208,6 +225,20 @@ def call_save_light(light_input: LightSearchModel):
     )
     return save_to_gcs(gcs_data)
 
+@app.post("/call_and_save/geographic")
+def call_save_geographic():
+    geo_response = call_geographic_api()
+    if isinstance(geo_response, JSONResponse):
+        return geo_response
+    gcs_data = GcsStringUpload(
+        service_account_key=service_account_file_path,
+        gcp_project_id=project_id,
+        bucket_name=bucket_name,
+        file_name=f"{file_name_prefix_geographic}/geographic.json",
+        data=json.dumps(geo_response),
+    )    
+    return save_to_gcs(gcs_data)
+
 @app.post("/call_and_save/income")
 def call_save_income():
     income_response = call_income_webfile_download()
@@ -235,3 +266,25 @@ def call_save_population():
         data=population_response,
     )    
     return save_to_gcs(gcs_data)
+
+@app.get("/data")
+def get_processed_data():
+    """
+    Process the newest crime, outage, income, population, and geographic
+    data from GCS and return it for the webapp.
+    On failure, returns a JSONResponse with status_code=500
+    """
+    try:
+        df, geo, start_date, end_date = get_data()
+    except Exception as e:
+        print(f"Error processing data: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Error processing data: {e}"},
+        )
+    return {
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+        "data": json.loads(df.to_json(orient="records")),
+        "geographic": geo,
+    }
