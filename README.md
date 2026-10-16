@@ -183,8 +183,6 @@ Then confirm the object landed in your bucket.
 ---
 
 ## Setup — Deploy to GCP
-Deployment uses Cloud Run and Cloud Scheduler; first configure, then run the deploy script.
-
 ####  config.sh
 
 ```bash
