@@ -131,7 +131,6 @@ def call_chicago_light_api(query_params: LightQuery):
         "$limit": query_params.number_records,
     }
     try:
-        # (connect, read) timeout; large pulls can take several minutes
         response = requests.get(query_params.light_url, headers=headers,
                                  params=params, timeout=(10, 600))
         response.raise_for_status()
@@ -157,7 +156,7 @@ def call_chicago_crime_api(query_params: CrimeQuery):
               "$limit": query_params.number_records}
     try:
         response = requests.get(query_params.crime_url, headers=headers,
-                        params=params, timeout=120)
+                        params=params, timeout=(10, 600))
         response.raise_for_status()
         return response.json()
     except Exception as e:
