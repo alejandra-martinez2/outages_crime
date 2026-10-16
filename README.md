@@ -223,7 +223,7 @@ This runs every step in order, each time:
 5. Prints the API URL, dashboard URL, and scheduler job names
 
 Re-run the same command to redeploy everything after code changes.
-Or one piece at a time while iterating:
+Or one piece at a time while iterating in bash:
 ```bash
 source config.sh
 ```
@@ -239,6 +239,9 @@ gcloud run deploy "$WEBAPP_SERVICE" --source ./streamlit --region "$REGION" --pr
 ```
 
 Change a job's schedule or request body (after editing `config.sh`):
+```bash
+gcloud scheduler jobs update http "$SCHEDULER_JOB_CRIME" --location "$REGION" --schedule "$SCHEDULE_CRIME" --message-body "$MESSAGE_BODY_CRIME"
+```
 ```bash
 gcloud scheduler jobs update http "$SCHEDULER_JOB_LIGHT" --location "$REGION" --schedule "$SCHEDULE_LIGHT" --message-body "$MESSAGE_BODY_LIGHT"
 ```
