@@ -94,8 +94,7 @@ def build_map(data,geo, col, label, low, high, title):
    return deck, lo, hi , unmatched
 
 # Used AI model Sonnet 5.5 for function legend to get the HTML and CSS properties
-#prompt: python
-# give me html and css for reamlit function named legend to show a thin gradiend descent bar from low to high rgb color and low and high values at 2 decimal points. use st.markdown with css html
+#prompt: give me html and css for reamlit function named legend to show a thin gradiend descent bar from low to high rgb color and low and high values at 2 decimal points. use st.markdown with css html
 def legend(label, low, high, lo, hi):
     grad = f"linear-gradient(to right, rgb{tuple(low)}, rgb{tuple(high)})"
     st.markdown(
